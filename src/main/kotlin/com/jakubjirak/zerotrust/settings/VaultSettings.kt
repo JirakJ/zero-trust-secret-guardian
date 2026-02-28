@@ -8,6 +8,8 @@ import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
 import com.intellij.openapi.project.Project
 
+import com.intellij.credentialStore.generateServiceName
+
 @State(
     name = "ZeroTrustVaultSettings",
     storages = [Storage("zeroTrustVault.xml")]
@@ -54,7 +56,7 @@ class VaultSettings : PersistentStateComponent<VaultSettings.State> {
         }
 
     private fun getCredentialAttributes(): CredentialAttributes {
-        return CredentialAttributes("ZeroTrustSecretGuardian", "vault-token")
+        return CredentialAttributes(generateServiceName("ZeroTrustSecretGuardian", "vault-token"))
     }
 
     fun setToken(token: String?) {
