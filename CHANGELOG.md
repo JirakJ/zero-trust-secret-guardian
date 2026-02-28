@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2026.2.10] - 2026-02-28
+### Fixed
+- **API Deprecation:** Resolved warning regarding `CredentialAttributes` constructor by using the modern `generateServiceName` API.
+
 ## [2026.2.9] - 2026-02-28
 ### Added
 - **Freemium Licensing Model:** Introduced `product-descriptor` with product code `PZEROTRUSTENTER` for integration with JetBrains Marketplace Freemium pricing model.
