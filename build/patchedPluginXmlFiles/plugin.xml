@@ -1,0 +1,40 @@
+<idea-plugin>
+  <version>2026.2.8</version>
+  <change-notes><![CDATA[<h3>2026.2.1</h3>
+<ul>
+    <li>🚀 Initial release of Zero-Trust Enterprise Secret Guardian.</li>
+    <li>✓ Infisical and Doppler integration.</li>
+    <li>✓ In-memory secret injection for local run configurations.</li>
+    <li>✓ Pre-commit scanning.</li>
+    <li>✓ Log masking.</li>
+</ul>]]></change-notes>
+  <idea-version since-build="241" />
+  <id>com.jakubjirak.zerotrustsecret</id>
+  <name>Zero-Trust Enterprise Secret Guardian</name>
+  <vendor email="support@jakubjirak.com" url="https://jakubjirak.com">Jakub Jirak</vendor>
+  <description><![CDATA[<p><strong>Zero-Trust Enterprise Secret Guardian</strong></p>
+<p>Eliminate security risks associated with leaked sensitive data (API keys, database access, cloud certificates) during local application development.</p>
+<ul>
+    <li>✓ Authenticate to Infisical and Doppler cloud vaults.</li>
+    <li>✓ Environment Picker to instantly switch between Dev, Staging, Prod.</li>
+    <li>✓ Dynamic Run Configuration Interception to inject secrets in memory without writing to disk.</li>
+    <li>✓ Pre-Commit Scanner Guardrail to block committing known vault secrets.</li>
+    <li>✓ Log Masking to censor injected secrets in terminal and IDE application logs.</li>
+</ul>]]></description>
+  <depends>com.intellij.modules.platform</depends>
+  <depends>com.intellij.modules.lang</depends>
+  <depends>com.intellij.modules.vcs</depends>
+  <depends>com.intellij.modules.java</depends>
+  <extensions defaultExtensionNs="com.intellij">
+    <toolWindow id="Zero-Trust Vault" anchor="right" icon="AllIcons.Nodes.KeymapTools" factoryClass="com.jakubjirak.zerotrust.ui.ZeroTrustToolWindowFactory" />
+    <projectService serviceImplementation="com.jakubjirak.zerotrust.settings.VaultSettings" />
+    <projectService serviceImplementation="com.jakubjirak.zerotrust.execution.ZeroTrustSecretCache" />
+    <projectService serviceImplementation="com.jakubjirak.zerotrust.licensing.LicenseManager" />
+    <runConfigurationExtension implementation="com.jakubjirak.zerotrust.execution.ZeroTrustRunConfigurationExtension" />
+    <consoleInputFilterProvider implementation="com.jakubjirak.zerotrust.execution.ZeroTrustInputFilterProvider" />
+    <checkinHandlerFactory implementation="com.jakubjirak.zerotrust.vcs.ZeroTrustCheckinHandlerFactory" />
+  </extensions>
+  <projectListeners>
+    <listener class="com.jakubjirak.zerotrust.execution.ZeroTrustExecutionListener" topic="com.intellij.execution.ExecutionListener" />
+  </projectListeners>
+</idea-plugin>
