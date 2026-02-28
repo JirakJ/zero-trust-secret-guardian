@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2026.2.9] - 2026-02-28
+### Added
+- **Freemium Licensing Model:** Introduced `product-descriptor` with product code `PZEROTRUSTENTER` for integration with JetBrains Marketplace Freemium pricing model.
+
 ## [2026.2.8] - 2026-02-28
 ### Added
 - **Licensing Core:** Introduced `LicenseManager` as the foundation for the Freemium / Enterprise model.
