@@ -3,6 +3,8 @@
     <name>Zero-Trust Enterprise Secret Guardian</name>
     <vendor email="support@jakubjirak.com" url="https://jakubjirak.com">Jakub Jirak</vendor>
 
+    <product-descriptor code="PZEROTRUSTENTER" release-date="20260228" release-version="20260209"/>
+
     <description><![CDATA[
       <p><strong>Zero-Trust Enterprise Secret Guardian</strong></p>
       <p>Eliminate security risks associated with leaked sensitive data (API keys, database access, cloud certificates) during local application development.</p>
