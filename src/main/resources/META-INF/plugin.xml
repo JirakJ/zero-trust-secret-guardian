@@ -33,6 +33,12 @@
         
         <checkinHandlerFactory implementation="com.jakubjirak.zerotrust.vcs.ZeroTrustCheckinHandlerFactory"/>
     
+        <projectConfigurable
+            parentId="tools"
+            instance="com.jakubjirak.zerotrust.settings.VaultSettingsConfigurable"
+            id="zerotrust.secret.guardian.settings"
+            displayName="Zero-Trust Secret Guardian"/>
+
         <notificationGroup id="Zero-Trust Secret Guardian Feedback" displayType="BALLOON"/>
         <projectActivity implementation="com.jakubjirak.zerotrust.feedback.FeedbackNotifier"/>
     </extensions>
