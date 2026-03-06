@@ -11,7 +11,6 @@ import com.intellij.openapi.ui.Messages
 import com.jakubjirak.zerotrust.execution.ZeroTrustSecretCache
 import com.jakubjirak.zerotrust.settings.VaultSettings
 import com.jakubjirak.zerotrust.api.VaultClientFactory
-import com.jakubjirak.zerotrust.licensing.LicenseManager
 import kotlinx.coroutines.runBlocking
 
 class ZeroTrustCheckinHandlerFactory : CheckinHandlerFactory() {
@@ -26,11 +25,6 @@ class ZeroTrustCheckinHandler(
 ) : CheckinHandler() {
 
     override fun beforeCheckin(): ReturnResult {
-        // Pre-commit scanning is an Enterprise feature
-        if (!LicenseManager.getInstance(project).isEnterprise()) {
-            return ReturnResult.COMMIT
-        }
-
         // Fetch secrets to check against. We use cache or fetch from vault if cache is empty.
         var secrets = ZeroTrustSecretCache.getInstance(project).getSecrets().values.filter { it.length > 3 }
         

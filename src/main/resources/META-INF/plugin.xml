@@ -3,8 +3,6 @@
     <name>Zero-Trust Enterprise Secret Guardian</name>
     <vendor email="support@jakubjirak.com" url="https://jakubjirak.com">Jakub Jirak</vendor>
 
-    <product-descriptor code="PZEROTRUSTENTER" release-date="20260228" release-version="20262" optional="true"/>
-
     <description><![CDATA[
       <p><strong>Zero-Trust Enterprise Secret Guardian</strong></p>
       <p>Eliminate security risks associated with leaked sensitive data (API keys, database access, cloud certificates) during local application development.</p>
@@ -28,13 +26,15 @@
 
         <projectService serviceImplementation="com.jakubjirak.zerotrust.settings.VaultSettings"/>
         <projectService serviceImplementation="com.jakubjirak.zerotrust.execution.ZeroTrustSecretCache"/>
-        <projectService serviceImplementation="com.jakubjirak.zerotrust.licensing.LicenseManager"/>
 
         <runConfigurationExtension implementation="com.jakubjirak.zerotrust.execution.ZeroTrustRunConfigurationExtension"/>
         
         <consoleInputFilterProvider implementation="com.jakubjirak.zerotrust.execution.ZeroTrustInputFilterProvider"/>
         
         <checkinHandlerFactory implementation="com.jakubjirak.zerotrust.vcs.ZeroTrustCheckinHandlerFactory"/>
+    
+        <notificationGroup id="Zero-Trust Secret Guardian Feedback" displayType="BALLOON"/>
+        <projectActivity implementation="com.jakubjirak.zerotrust.feedback.FeedbackNotifier"/>
     </extensions>
 
     <projectListeners>

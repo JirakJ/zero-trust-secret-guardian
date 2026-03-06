@@ -7,13 +7,12 @@ All notable changes to this project will be documented in this file.
 - **API Deprecation:** Resolved warning regarding `CredentialAttributes` constructor by using the modern `generateServiceName` API.
 
 ## [2026.2.9] - 2026-02-28
-### Added
-- **Freemium Licensing Model:** Introduced `product-descriptor` with product code `PZEROTRUSTENTER` for integration with JetBrains Marketplace Freemium pricing model.
+### Changed
+- **All Features Free:** Removed product-descriptor and licensing restrictions; all features are now available to everyone at no cost.
 
 ## [2026.2.8] - 2026-02-28
 ### Added
-- **Licensing Core:** Introduced `LicenseManager` as the foundation for the Freemium / Enterprise model.
-- **Enterprise Pre-Commit:** The Pre-Commit Guardrail (checking for secrets before allowing `git commit`) is now correctly flagged as an exclusive Enterprise feature.
+- **Enterprise Pre-Commit:** The Pre-Commit Guardrail checks for secrets before allowing `git commit`.
 
 ## [2026.2.7] - 2026-02-28
 ### Added
