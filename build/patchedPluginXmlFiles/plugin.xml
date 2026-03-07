@@ -1,5 +1,5 @@
 <idea-plugin>
-  <version>2026.3.4</version>
+  <version>2026.3.5</version>
   <change-notes><![CDATA[<h3>2026.2.1</h3>
 <ul>
     <li>🚀 Initial release of Zero-Trust Enterprise Secret Guardian.</li>
@@ -21,7 +21,7 @@
     <li>✓ Pre-Commit Scanner Guardrail to block committing known vault secrets.</li>
     <li>✓ Log Masking to censor injected secrets in terminal and IDE application logs.</li>
 </ul>]]></description>
-  <product-descriptor code="PZEROTRUST" release-date="20260307" release-version="20263" optional="true" />
+  <product-descriptor code="PZEROTRUSTENTER" release-date="20260307" release-version="20263" optional="true" />
   <depends>com.intellij.modules.platform</depends>
   <depends>com.intellij.modules.lang</depends>
   <depends>com.intellij.modules.vcs</depends>

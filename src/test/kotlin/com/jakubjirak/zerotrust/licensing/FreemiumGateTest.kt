@@ -157,7 +157,7 @@ class FreemiumGateTest {
 
     @Test
     fun `PRODUCT_CODE is correct`() {
-        assertEquals("PZEROTRUST", FreemiumGate.PRODUCT_CODE)
+        assertEquals("PZEROTRUSTENTER", FreemiumGate.PRODUCT_CODE)
     }
 
     @Test

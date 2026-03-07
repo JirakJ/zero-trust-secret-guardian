@@ -15,7 +15,7 @@
       </ul>
     ]]></description>
 
-    <product-descriptor code="PZEROTRUST" release-date="20260307" release-version="20263" optional="true"/>
+    <product-descriptor code="PZEROTRUSTENTER" release-date="20260307" release-version="20263" optional="true"/>
 
     <depends>com.intellij.modules.platform</depends>
     <depends>com.intellij.modules.lang</depends>
