@@ -14,7 +14,7 @@ class FreemiumGate {
     enum class LicenseStatus { FREE, TRIAL, PAID }
 
     companion object {
-        const val PRODUCT_CODE = "PZEROTRUST"
+        const val PRODUCT_CODE = "PZEROTRUSTENTER"
 
         const val FEATURE_ADVANCED_SCANNING = "advanced_scanning"
         const val FEATURE_MULTI_VAULT = "multi_vault"
