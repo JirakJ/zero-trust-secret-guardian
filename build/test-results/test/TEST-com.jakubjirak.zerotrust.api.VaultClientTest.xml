@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.jakubjirak.zerotrust.api.VaultClientTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2026-02-28T15:05:38" hostname="Jakub--MacBook-Pro.local" time="0.097">
-  <properties/>
-  <testcase name="test client factory returns correct client()" classname="com.jakubjirak.zerotrust.api.VaultClientTest" time="0.097"/>
-  <system-out><![CDATA[]]></system-out>
-  <system-err><![CDATA[]]></system-err>
-</testsuite>
