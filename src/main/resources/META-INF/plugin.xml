@@ -15,12 +15,16 @@
       </ul>
     ]]></description>
 
+    <product-descriptor code="PZEROTRUST" release-date="20260307" release-version="20263" optional="true"/>
+
     <depends>com.intellij.modules.platform</depends>
     <depends>com.intellij.modules.lang</depends>
     <depends>com.intellij.modules.vcs</depends>
     <depends>com.intellij.modules.java</depends>
 
     <extensions defaultExtensionNs="com.intellij">
+        <applicationService serviceImplementation="com.jakubjirak.zerotrust.licensing.FreemiumGate"/>
+
         <toolWindow id="Zero-Trust Vault" anchor="right" icon="AllIcons.Nodes.KeymapTools"
                     factoryClass="com.jakubjirak.zerotrust.ui.ZeroTrustToolWindowFactory"/>
 
