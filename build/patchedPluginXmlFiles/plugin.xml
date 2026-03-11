@@ -1,5 +1,5 @@
 <idea-plugin>
-  <version>2026.3.6</version>
+  <version>2026.3.7</version>
   <change-notes><![CDATA[<h3>2026.2.1</h3>
 <ul>
     <li>🚀 Initial release of Zero-Trust Enterprise Secret Guardian.</li>
