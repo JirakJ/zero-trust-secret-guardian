@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2026.8.0] - 2026-11-10
+
+### Changed
+
+- The plugin is now completely free — all features unlocked, no license needed.
+- Source code is now open source under Apache-2.0: https://github.com/JirakJ/zero-trust-secret-guardian
+
 ## [2026.2.10] - 2026-02-28
 ### Fixed
 - **API Deprecation:** Resolved warning regarding `CredentialAttributes` constructor by using the modern `generateServiceName` API.

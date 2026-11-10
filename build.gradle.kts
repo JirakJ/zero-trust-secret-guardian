@@ -61,6 +61,11 @@ tasks {
         """.trimIndent())
         
         changeNotes.set("""
+            <h3>2026.8.0</h3>
+            <ul>
+                <li>The plugin is now completely free — all features unlocked, no license needed.</li>
+                <li>Source code is now open source under Apache-2.0: https://github.com/JirakJ/zero-trust-secret-guardian</li>
+            </ul>
             <h3>2026.2.1</h3>
             <ul>
                 <li>🚀 Initial release of Zero-Trust Enterprise Secret Guardian.</li>
