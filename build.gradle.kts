@@ -60,6 +60,14 @@ intellijPlatform {
         }
 
         changeNotes = """
+            <h3>2026.9.0</h3>
+            <ul>
+                <li>Fixed Doppler/Infisical vault connection (URLs and Authorization header contained literal placeholders); query parameters are URL-encoded.</li>
+                <li>HTTP calls have timeouts and retry only server errors.</li>
+                <li>Pre-commit scan no longer blocks the UI thread, scans only text files and never echoes secret values.</li>
+                <li>Console masking replaces longer secrets first and is thread-safe.</li>
+                <li>Removed a dead log filter and the unused JavaScript dependency.</li>
+            </ul>
             <h3>2026.8.0</h3>
             <ul>
                 <li>The plugin is now completely free — all features unlocked, no license needed.</li>
