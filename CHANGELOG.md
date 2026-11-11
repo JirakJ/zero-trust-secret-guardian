@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [2026.9.0] - 2026-11-11
+
 ### Fixed
 
 - **Vault connection never worked:** request URLs, the `Authorization` header and several messages contained escaped `\$` placeholders instead of the actual values, so every Doppler/Infisical call hit a literal `$baseUrl/...` URL. Query parameters are now URL-encoded.
