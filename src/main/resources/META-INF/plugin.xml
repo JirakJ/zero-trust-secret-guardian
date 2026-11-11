@@ -9,9 +9,9 @@
       <ul>
           <li>✓ Authenticate to Infisical and Doppler cloud vaults.</li>
           <li>✓ Environment Picker to instantly switch between Dev, Staging, Prod.</li>
-          <li>✓ Dynamic Run Configuration Interception to inject secrets in memory without writing to disk.</li>
-          <li>✓ Pre-Commit Scanner Guardrail to block committing known vault secrets.</li>
-          <li>✓ Log Masking to censor injected secrets in terminal and IDE application logs.</li>
+          <li>✓ Dynamic Run Configuration Interception to inject secrets into Java-based run configurations without writing them to disk.</li>
+          <li>✓ Pre-Commit Scanner Guardrail that warns before committing known vault secrets.</li>
+          <li>✓ Log Masking to censor injected secrets in Run/Debug console output.</li>
       </ul>
     ]]></description>
 

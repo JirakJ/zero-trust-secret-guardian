@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+
+### Fixed
+
+- **Vault connection never worked:** request URLs, the `Authorization` header and several messages contained escaped `\$` placeholders instead of the actual values, so every Doppler/Infisical call hit a literal `$baseUrl/...` URL. Query parameters are now URL-encoded.
+- HTTP calls now have timeouts and only retry server errors (5xx); authentication errors fail fast instead of being retried three times.
+- The pre-commit scan no longer blocks the UI thread while fetching secrets, scans only text files and never echoes secret values in its warning.
+- Console masking replaces longer secrets before shorter ones and is thread-safe.
+
+### Removed
+
+- Dead `ZeroTrustLogFilterProvider` (never registered, did nothing) and the unused `JavaScript` platform dependency.
+
 ## [2026.8.0] - 2026-11-10
 
 ### Changed

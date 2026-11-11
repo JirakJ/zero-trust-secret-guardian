@@ -11,18 +11,27 @@ This plugin creates a direct bridge between cloud vaults (Infisical, Doppler) an
 
 - **Vault Authentication:** Secure login to Doppler and Infisical API services using user tokens stored securely via JetBrains Credential Store.
 - **Environment Picker:** Easily switch between environments (e.g., Dev, Staging, Prod) instantly through the dedicated Tool Window.
-- **Dynamic Run Configuration Interception:** The plugin intercepts the IDE's execution process. Before the application starts, it asynchronously downloads the secrets and injects them as environment variables directly into the process memory (JVM, Node.js, Python), ensuring the code never reads them from the disk.
-- **Pre-Commit Scanner (Guardrail):** Integrates into the commit dialog. Just before a commit, it scans modified files and blocks the action if it detects strings matching known keys from the vault.
-- **Log Masking:** All injected secrets are automatically censored (replaced with asterisks) if they appear in the integrated terminal or IDE application logs.
+- **Dynamic Run Configuration Interception:** Before a Java-based run configuration (Application, JUnit, Gradle/Maven-launched JVM, …) starts, the plugin downloads the secrets and injects them as environment variables of the launched process, so the code never reads them from a file on disk.
+- **Pre-Commit Scanner (Guardrail):** Integrates into the commit dialog. Just before a commit, it scans the files being committed and warns (letting you cancel) if they contain a value that is stored in the vault.
+- **Log Masking:** Injected secrets are replaced with asterisks when they appear in the Run/Debug console output. Values shorter than 5 characters and common words (`true`, `dev`, …) are not masked.
 
 ## Security (Zero-Trust)
-Retrieved secrets exist solely in RAM during the IDE session. The plugin strictly adheres to zero-trust principles and does not store secrets in any local cache, registry, or disk files.
+Retrieved secrets exist solely in RAM during the IDE session and are dropped when no run configuration is running any more; they are never written to disk. Only the vault access token is persisted, in the IDE Credential Store (Password Safe).
 
 ## Installation
 - Install directly from JetBrains Marketplace.
 - Open the **Zero-Trust Vault** Tool Window on the right panel.
 - Enter your Infisical or Doppler Token and connect.
 - Run your applications as usual; secrets will be injected automatically!
+
+## Building from source
+
+```bash
+./gradlew buildPlugin   # plugin ZIP in build/distributions/
+./gradlew detekt test   # static analysis + unit tests
+```
+
+Requires JDK 21.
 
 ## Free & open source
 

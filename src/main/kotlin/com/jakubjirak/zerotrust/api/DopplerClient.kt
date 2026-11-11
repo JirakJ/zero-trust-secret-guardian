@@ -1,49 +1,36 @@
 package com.jakubjirak.zerotrust.api
 
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-import okhttp3.OkHttpClient
+import com.google.gson.JsonParser
+import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.Request
-import java.io.IOException
 
-class DopplerClient : VaultClient {
-    private val client = OkHttpClient.Builder()
-        .addInterceptor { chain ->
-            var request = chain.request()
-            var response = chain.proceed(request)
-            var tryCount = 0
-            while (!response.isSuccessful && tryCount < 3) {
-                tryCount++
-                response.close()
-                response = chain.proceed(request)
-            }
-            response
-        }
-        .build()
+/** Doppler: `GET /v3/configs/config/secrets/download?format=json&project=…&config=…`. */
+class DopplerClient : HttpVaultClient("Doppler") {
 
-    private val gson = Gson()
-
-    override suspend fun getSecrets(project: String, environment: String, token: String, customUrl: String?): Map<String, String> = withContext(Dispatchers.IO) {
-        val baseUrl = if (customUrl.isNullOrBlank()) "https://api.doppler.com" else customUrl.trimEnd('/')
-        val url = "\$baseUrl/v3/configs/config/secrets/download?format=json&project=\$project&config=\$environment"
-        
-        val request = Request.Builder()
-            .url(url)
-            .addHeader("Authorization", "Bearer \$token")
-            .addHeader("Accept", "application/json")
+    override fun buildRequest(project: String, environment: String, token: String, customUrl: String?): Request {
+        val url = "${baseUrl(customUrl, DEFAULT_URL)}/v3/configs/config/secrets/download".toHttpUrl()
+            .newBuilder()
+            .addQueryParameter("format", "json")
+            .addQueryParameter("project", project)
+            .addQueryParameter("config", environment)
             .build()
+        return Request.Builder()
+            .url(url)
+            .header("Authorization", "Bearer $token")
+            .header("Accept", "application/json")
+            .build()
+    }
 
-        client.newCall(request).execute().use { response ->
-            if (!response.isSuccessful) {
-                throw IOException("Doppler API error: \${response.code} \${response.message}")
-            }
-            
-            val responseBody = response.body?.string() ?: return@withContext emptyMap()
-            
-            val mapType = object : TypeToken<Map<String, String>>() {}.type
-            return@withContext gson.fromJson(responseBody, mapType) ?: emptyMap()
-        }
+    /** The download endpoint returns a flat JSON object of `NAME: value`; non-string values are skipped. */
+    override fun parseSecrets(body: String): Map<String, String> {
+        val root = JsonParser.parseString(body)
+        if (!root.isJsonObject) return emptyMap()
+        return root.asJsonObject.entrySet()
+            .filter { (_, value) -> value.isJsonPrimitive && value.asJsonPrimitive.isString }
+            .associate { (key, value) -> key to value.asString }
+    }
+
+    companion object {
+        const val DEFAULT_URL = "https://api.doppler.com"
     }
 }

@@ -1,72 +1,54 @@
 package com.jakubjirak.zerotrust.api
 
-import com.google.gson.Gson
-import com.google.gson.JsonObject
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-import okhttp3.OkHttpClient
+import com.google.gson.JsonElement
+import com.google.gson.JsonParser
+import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.Request
-import java.io.IOException
 
-class InfisicalClient : VaultClient {
-    private val client = OkHttpClient.Builder()
-        .addInterceptor { chain ->
-            var request = chain.request()
-            var response = chain.proceed(request)
-            var tryCount = 0
-            while (!response.isSuccessful && tryCount < 3) {
-                tryCount++
-                response.close()
-                response = chain.proceed(request)
-            }
-            response
-        }
-        .build()
+/** Infisical: `GET /api/v3/secrets/raw?workspaceId=…&environment=…`. */
+class InfisicalClient : HttpVaultClient("Infisical") {
 
-    private val gson = Gson()
-
-    override suspend fun getSecrets(project: String, environment: String, token: String, customUrl: String?): Map<String, String> = withContext(Dispatchers.IO) {
-        val baseUrl = if (customUrl.isNullOrBlank()) "https://app.infisical.com" else customUrl.trimEnd('/')
-        val url = "\$baseUrl/api/v3/secrets/raw?workspaceId=\$project&environment=\$environment"
-        
-        val request = Request.Builder()
-            .url(url)
-            .addHeader("Authorization", "Bearer \$token")
-            .addHeader("Accept", "application/json")
+    override fun buildRequest(project: String, environment: String, token: String, customUrl: String?): Request {
+        val url = "${baseUrl(customUrl, DEFAULT_URL)}/api/v3/secrets/raw".toHttpUrl()
+            .newBuilder()
+            .addQueryParameter("workspaceId", project)
+            .addQueryParameter("environment", environment)
             .build()
+        return Request.Builder()
+            .url(url)
+            .header("Authorization", "Bearer $token")
+            .header("Accept", "application/json")
+            .build()
+    }
 
-        client.newCall(request).execute().use { response ->
-            if (!response.isSuccessful) {
-                throw IOException("Infisical API error: \${response.code} \${response.message}")
-            }
-            
-            val responseBody = response.body?.string() ?: return@withContext emptyMap()
-            
-            val jsonObject = gson.fromJson(responseBody, JsonObject::class.java)
-            val result = mutableMapOf<String, String>()
-            
-            if (jsonObject != null && jsonObject.has("secrets")) {
-                val secretsElement = jsonObject.get("secrets")
-                if (secretsElement.isJsonObject) {
-                    for ((key, valueElement) in secretsElement.asJsonObject.entrySet()) {
-                        if (valueElement.isJsonPrimitive && valueElement.asJsonPrimitive.isString) {
-                            result[key] = valueElement.asString
-                        }
-                    }
-                } else if (secretsElement.isJsonArray) {
-                    for (element in secretsElement.asJsonArray) {
-                        if (element.isJsonObject) {
-                            val obj = element.asJsonObject
-                            val key = obj.get("secretKey")?.asString
-                            val value = obj.get("secretValue")?.asString
-                            if (key != null && value != null) {
-                                result[key] = value
-                            }
-                        }
-                    }
+    /**
+     * Accepts both shapes Infisical has used for `secrets`: an array of
+     * `{secretKey, secretValue}` objects, or a flat `{NAME: value}` object.
+     */
+    override fun parseSecrets(body: String): Map<String, String> {
+        val root = JsonParser.parseString(body)
+        if (!root.isJsonObject) return emptyMap()
+        val secrets = root.asJsonObject.get("secrets") ?: return emptyMap()
+        return when {
+            secrets.isJsonObject -> secrets.asJsonObject.entrySet()
+                .filter { (_, value) -> value.isString() }
+                .associate { (key, value) -> key to value.asString }
+            secrets.isJsonArray -> secrets.asJsonArray
+                .filter { it.isJsonObject }
+                .mapNotNull { element ->
+                    val obj = element.asJsonObject
+                    val key = obj.get("secretKey")?.takeIf { it.isString() }?.asString
+                    val value = obj.get("secretValue")?.takeIf { it.isString() }?.asString
+                    if (key != null && value != null) key to value else null
                 }
-            }
-            return@withContext result
+                .toMap()
+            else -> emptyMap()
         }
+    }
+
+    private fun JsonElement.isString(): Boolean = isJsonPrimitive && asJsonPrimitive.isString
+
+    companion object {
+        const val DEFAULT_URL = "https://app.infisical.com"
     }
 }
