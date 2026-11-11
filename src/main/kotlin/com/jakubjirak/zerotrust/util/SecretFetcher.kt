@@ -33,7 +33,7 @@ object SecretFetcher {
         val task = object : Task.Modal(project, "Fetching Zero-Trust Secrets", true) {
             override fun run(indicator: ProgressIndicator) {
                 indicator.isIndeterminate = true
-                indicator.text = "Connecting to \$provider..."
+                indicator.text = "Connecting to $provider..."
                 
                 var retry = true
                 while (retry) {
@@ -52,7 +52,8 @@ object SecretFetcher {
                         ApplicationManager.getApplication().invokeAndWait {
                             val result = Messages.showYesNoCancelDialog(
                                 project,
-                                "Failed to fetch secrets from \$provider: \${e.message}\n\nDo you want to retry, continue without secrets, or cancel execution?",
+                                "Failed to fetch secrets from $provider: ${e.message}\n\n" +
+                                    "Do you want to retry, continue without secrets, or cancel execution?",
                                 "Zero-Trust Vault Error",
                                 "Retry",
                                 "Continue Without Secrets",

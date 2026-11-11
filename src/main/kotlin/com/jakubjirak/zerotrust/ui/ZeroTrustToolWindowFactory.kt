@@ -43,7 +43,7 @@ class ZeroTrustToolWindowContent(private val project: Project) {
         gbc.weightx = 1.0
 
         val vaultTypeLabel = JBLabel("Vault Provider:")
-        val vaultTypeCombo = JComboBox(arrayOf("Infisical", "Doppler"))
+        val vaultTypeCombo = JComboBox(VaultClientFactory.PROVIDERS.toTypedArray())
         
         val urlLabel = JBLabel("Custom Base URL (Optional):")
         val urlField = JBTextField()
@@ -105,14 +105,14 @@ class ZeroTrustToolWindowContent(private val project: Project) {
                         client.getSecrets(selectedProject, selectedEnv, enteredToken, selectedUrl)
                     }
                     if (secrets.isNotEmpty()) {
-                        statusLabel.text = "Connected! Found \${secrets.size} secrets."
+                        statusLabel.text = "Connected! Found ${secrets.size} secrets."
                         statusLabel.foreground = com.intellij.ui.JBColor.GREEN
                     } else {
                         statusLabel.text = "Connected, but no secrets found."
                         statusLabel.foreground = com.intellij.ui.JBColor.ORANGE
                     }
                 } catch (e: Exception) {
-                    statusLabel.text = "Error: \${e.message}"
+                    statusLabel.text = "Error: ${e.message}"
                     statusLabel.foreground = com.intellij.ui.JBColor.RED
                 } finally {
                     spinner.suspend()

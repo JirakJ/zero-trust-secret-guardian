@@ -1,66 +1,65 @@
 plugins {
     id("java")
-    id("org.jetbrains.kotlin.jvm") version "1.9.22"
-    id("org.jetbrains.intellij") version "1.17.2"
+    id("org.jetbrains.kotlin.jvm") version "2.1.0"
+    id("org.jetbrains.intellij.platform") version "2.10.0"
+    id("io.gitlab.arturbosch.detekt") version "1.23.7"
 }
 
 group = "com.jakubjirak"
+version = providers.gradleProperty("pluginVersion").get()
 
-val pluginVersion: String by project
-version = pluginVersion
+kotlin {
+    jvmToolchain(providers.gradleProperty("javaVersion").get().toInt())
+}
 
 repositories {
     mavenCentral()
+    intellijPlatform {
+        defaultRepositories()
+    }
 }
 
 dependencies {
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0")
-    // Use an HTTP client for API requests (e.g., Ktor or OkHttp)
-    implementation("com.squareup.okhttp3:okhttp:4.12.0")
-    implementation("com.google.code.gson:gson:2.10.1")
+    intellijPlatform {
+        create(
+            providers.gradleProperty("platformType"),
+            providers.gradleProperty("platformVersion"),
+        )
+        bundledPlugin("com.intellij.java")
+        pluginVerifier()
+        zipSigner()
+    }
 
-    testImplementation("org.junit.jupiter:junit-jupiter:5.10.2")
-    testImplementation("org.mockito:mockito-core:5.11.0")
-    testImplementation("org.mockito:mockito-inline:5.2.0")
+    // HTTP client for the vault REST APIs. Kotlin stdlib, coroutines and Gson come from the IDE.
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+    implementation("com.google.code.gson:gson:2.11.0")
+
+    testImplementation("org.junit.jupiter:junit-jupiter:5.11.4")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     testImplementation(kotlin("test"))
 }
 
-intellij {
-    val platformVersion: String by project
-    version.set(platformVersion)
-    type.set("IU")
-    
-    // Plugins required by this plugin
-    plugins.set(listOf("java", "JavaScript"))
+// Exclude IDE-provided libraries from the plugin distribution
+configurations {
+    runtimeClasspath {
+        exclude(group = "org.jetbrains.kotlin")
+        exclude(group = "org.jetbrains.kotlinx")
+        exclude(group = "org.jetbrains", module = "annotations")
+    }
 }
 
-tasks {
-    withType<JavaCompile> {
-        sourceCompatibility = "17"
-        targetCompatibility = "17"
-    }
-    
-    withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-        kotlinOptions.jvmTarget = "17"
-    }
+intellijPlatform {
+    buildSearchableOptions = false
 
-    patchPluginXml {
-        sinceBuild.set("242")
-        untilBuild.set("")
-        
-        pluginDescription.set("""
-            <p><strong>Zero-Trust Enterprise Secret Guardian</strong></p>
-            <p>Eliminate security risks associated with leaked sensitive data (API keys, database access, cloud certificates) during local application development.</p>
-            <ul>
-                <li>✓ Authenticate to Infisical and Doppler cloud vaults.</li>
-                <li>✓ Environment Picker to instantly switch between Dev, Staging, Prod.</li>
-                <li>✓ Dynamic Run Configuration Interception to inject secrets in memory without writing to disk.</li>
-                <li>✓ Pre-Commit Scanner Guardrail to block committing known vault secrets.</li>
-                <li>✓ Log Masking to censor injected secrets in terminal and IDE application logs.</li>
-            </ul>
-        """.trimIndent())
-        
-        changeNotes.set("""
+    pluginConfiguration {
+        version = providers.gradleProperty("pluginVersion")
+
+        ideaVersion {
+            sinceBuild = providers.gradleProperty("pluginSinceBuild")
+            untilBuild = provider { null }
+        }
+
+        changeNotes = """
             <h3>2026.8.0</h3>
             <ul>
                 <li>The plugin is now completely free — all features unlocked, no license needed.</li>
@@ -68,38 +67,46 @@ tasks {
             </ul>
             <h3>2026.2.1</h3>
             <ul>
-                <li>🚀 Initial release of Zero-Trust Enterprise Secret Guardian.</li>
-                <li>✓ Infisical and Doppler integration.</li>
-                <li>✓ In-memory secret injection for local run configurations.</li>
-                <li>✓ Pre-commit scanning.</li>
-                <li>✓ Log masking.</li>
+                <li>Initial release of Zero-Trust Enterprise Secret Guardian.</li>
+                <li>Infisical and Doppler integration.</li>
+                <li>In-memory secret injection for local run configurations.</li>
+                <li>Pre-commit scanning.</li>
+                <li>Log masking.</li>
             </ul>
-        """.trimIndent())
+        """.trimIndent()
     }
 
-    runPluginVerifier {
-        ideVersions.set(listOf("IC-2024.2", "IC-2024.3", "IC-2025.1.3"))
+    pluginVerification {
+        ides {
+            create("IC", "2024.2") { useInstaller = false }
+            create("IC", "2024.3") { useInstaller = false }
+            create("IC", "2025.1.7") { useInstaller = false }
+            create("IC", "2025.3.4") { useInstaller = false }
+        }
     }
 
-    signPlugin {
-        certificateChain.set(System.getenv("CERTIFICATE_CHAIN"))
-        privateKey.set(System.getenv("PRIVATE_KEY"))
-        password.set(System.getenv("PRIVATE_KEY_PASSWORD"))
+    signing {
+        certificateChain = providers.environmentVariable("CERTIFICATE_CHAIN")
+        privateKey = providers.environmentVariable("PRIVATE_KEY")
+        password = providers.environmentVariable("PRIVATE_KEY_PASSWORD")
     }
 
-    publishPlugin {
-        token.set(System.getenv("PLUGIN_TOKEN"))
-    }
-    
-    buildSearchableOptions {
-        enabled = false
-    }
-
-    test {
-        useJUnitPlatform()
+    publishing {
+        token = providers.environmentVariable("PLUGIN_TOKEN")
     }
 }
 
-kotlin {
-    jvmToolchain(17)
+tasks {
+    test {
+        useJUnitPlatform()
+    }
+
+    wrapper {
+        gradleVersion = "8.13"
+    }
+}
+
+detekt {
+    config.setFrom(files("detekt.yml"))
+    buildUponDefaultConfig = true
 }
